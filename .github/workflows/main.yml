@@ -1,0 +1,8 @@
+name: hello-world
+on: push
+jobs:
+  my-jobs:
+    runs-on: ubunut-lastet 
+    steps:
+      - name : my-step
+        run: echo "Hello World!"
