@@ -1,8 +1,34 @@
-name: hello-world
+name: security-project
 on: push
 jobs:
-  my-job:
-    runs-on: ubuntu-latest 
+  security-checks:
+    runs-on: ubuntu-latest
     steps:
-      - name: my-step
-        run: echo "Hello World!"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Python dependency scanning
+        run: |
+          pip install safety
+          safety check --full-report
+
+      - name: JavaScript code linting
+        run: |
+          npm install -g eslint
+          eslint .
+
+      - name: Run OWASP ZAP DAST
+        run: |
+          docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap-baseline.py \
+            -t http://localhost:3000 -g gen.conf -r zap-report.html
+
+      - name: Print security results
+        run: echo "Security checks completed"
+
+      - name: Build and test application (add your build and test commands)
+        run: |
+          # Add commands to build and test your application
+
+      - name: Deploy if checks pass (replace with your deployment steps)
+        if: success()
+        run: echo "Deployment steps go here"
